@@ -1,6 +1,11 @@
+import { getUser } from "/src/scripts/services/user.js"
+import { getRepositories } from "/src/scripts/services/repositories.js"
+import { user } from "/src/scripts/objects/user.js"
+import { screen } from "/src/scripts/objects/screen.js"
+
 document.getElementById('btn-search').addEventListener('click', () => {
     const userName = document.getElementById('input-search').value
-    getUserProfile(userName)
+    getUserData(userName)
 })
 document.getElementById('input-search').addEventListener('keyup', (e) => {
     const userName = e.target.value
@@ -8,53 +13,18 @@ document.getElementById('input-search').addEventListener('keyup', (e) => {
     const isEnterKeyPressed = key === 13
 
     if (isEnterKeyPressed) {
-        getUserProfile(userName)
+        getUserData(userName)
     }
 })
+async function getUserData(userName) {
 
-async function user(userName) {
-    const response = await fetch(`https://api.github.com/users/${userName}`)
-    return await response.json()
-}
-async function repos(userName) {
-    const response = await fetch(`https://api.github.com/users/${userName}/repos`)
-    return await response.json()
-}
+    const userResponse = await getUser(userName)
+    const repositoriesResponse = await getRepositories(userName)
+    
+    user.setInfo(userResponse)
+    user.setRepositories(repositoriesResponse)
+    
+    
+    screen.renderUser(user)
 
-
-function getUserProfile(userName) {
-
-    repos(userName).then(reposData => {
-        console.log(reposData)
-    })
-
-    user(userName).then(userData => {
-        console.log(userData)
-        let userInfo = `<div class="info">
-                            <img src="${userData.avatar_url}" alt=Foto do perfil do usuario"/>
-                            <div class="data">
-                            <h1>${userData.name ?? 'Não possui nome cadastrado '}</h1>
-                            <p>${userData.bio ?? 'Não possui bio Cadastrada'} </p>
-                            </div>
-                        </div>`
-        document.querySelector(".profile-data").innerHTML = userInfo
-        getUserRepositores(userName)
-    });
-}
-
-function getUserRepositores(userName) {
-    repos(userName).then(reposData => {
-        let repositoriesItens = ""
-
-
-        reposData.forEach(repo => {
-            repositoriesItens += `<li><a href="${repo.html_url}" target="_blank">${repo.name}</a></li>`
-
-        })
-        document.querySelector(".profile-data").innerHTML += 
-        `<div class= "repositories section">
-            <h2>Repositorios</h2>
-            <ul>${repositoriesItens}</ul>
-        </div>`
-    })
 }
