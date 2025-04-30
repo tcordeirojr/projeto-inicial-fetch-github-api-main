@@ -17,6 +17,15 @@ const screen = {
             <ul>${repositoriesItens}</ul>
         </div>`
         }
+        let followersItens = ""
+        user.followers.forEach(follower => 
+            followersItens += `<li><a href="${follower.html_url}" target="_blank">${follower.login}</a></li>`)
+        if(user.followers.length > 0){
+            this.userProfile.innerHTML += `<div class= "followers section">
+            <h2>Seguidores</h2>
+            <ul>${followersItens}</ul>
+        </div>`
+        }
 },
 renderNotFound(){
     this.userProfile.innerHTML = "<h3>Usuário não encontrado! </h3>"

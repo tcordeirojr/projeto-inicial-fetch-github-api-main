@@ -2,6 +2,9 @@ import { getUser } from "./services/user.js"
 import { getRepositories } from "./services/repositories.js"
 import { user } from "./objects/user.js"
 import { screen } from "./objects/screen.js"
+import { followers } from "./services/followers.js"
+
+
 
 document.getElementById('btn-search').addEventListener('click', () => {
     const userName = document.getElementById('input-search').value
@@ -31,11 +34,14 @@ async function getUserData(userName) {
         return
     }
     const repositoriesResponse = await getRepositories(userName)
-    
     user.setInfo(userResponse)
     user.setRepositories(repositoriesResponse)
     
+    const followersResponse = await followers(userName)
+    user.setFollowers(followersResponse)
     
+    
+    // console.log(user.followers.length)
     screen.renderUser(user)
-
+    
 }
